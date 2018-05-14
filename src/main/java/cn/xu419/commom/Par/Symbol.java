@@ -6,10 +6,11 @@ package cn.xu419.commom.Par;
  */
 public class Symbol {
     private Boolean kind;//true 为终结符
-    private String value;//字符内容
+    private String value="";//字符内容
 
 
-
+    public Symbol() {
+    }
 
     public void setKind(Boolean kind) {
         this.kind = kind;
@@ -36,7 +37,6 @@ public class Symbol {
 
     @Override
     public String toString() {
-        return value+"("+kind+")"+" ";
-//        return value+" ";
+        return value;
     }
 }

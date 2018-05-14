@@ -1,5 +1,6 @@
 package cn.xu419.commom.Par;
 
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -10,12 +11,12 @@ class ParserTest {
 
     @Test
     void Pro() {
-        Parser.readProgramFile("E:/progr.txt");
+        Parser.readProgramFile("E:/progra.txt");
         System.out.println("------------->文法");
-        for (Program p :
-                Parser.getPrograms()) {
+        for (Program p : Parser.getPrograms()) {
             System.out.println(p.toString());
         }
+
 
 
         System.out.println("------------->非终结符");
@@ -23,7 +24,8 @@ class ParserTest {
             System.out.println(nt.toString());
         }
 
-        System.out.println("------------->推导结果");
+
+        System.out.println("------------->开始推导");
         Parser.process();
     }
 }

@@ -10,5 +10,6 @@ public class Terminator extends Symbol {
 
     public Terminator(String value) {
         super(true,value);
+        super.setValue(value);
     }
 }
