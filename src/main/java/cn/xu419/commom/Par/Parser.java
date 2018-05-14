@@ -1,11 +1,14 @@
 package cn.xu419.commom.Par;
 
 
+import cn.xu419.commom.Lex.Token;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Stack;
 
 
 /**
@@ -22,7 +25,7 @@ public class Parser {
 
 
 
-    public static boolean process() {
+    public static boolean process(ArrayList<Terminator> input) {
         ArrayList<Program> list = new ArrayList<Program>();
 
         // TODO: 2018/5/14 将programs复制到list
@@ -301,6 +304,60 @@ public class Parser {
             }
             System.out.println();
         }
+
+        Stack<Symbol> analysisStack = new Stack<Symbol>();
+
+        analysisStack.push(programs.get(0).getLeft());
+        int count = 0;//记录输入串位置
+        int step= 1;//记录步骤
+        while (!analysisStack.empty()){
+            System.out.println("第"+step+"步");
+            System.out.println("分析栈"+analysisStack+"\t");
+            System.out.print("剩余输入串");
+            for (int i = count; i < input.size(); i++) {
+                System.out.print(input.get(i).getValue());
+            }
+            System.out.println();
+            if(!analysisStack.peek().getKind()){
+                //如果栈顶是非终结符则选择产生式替换，打印产生式
+//                System.out.println(analysisStack.peek().getValue());
+//                System.out.println(input.get(count).getValue());
+
+
+                int x = isInVN(analysisStack.peek().getValue());
+                int y = isInVT(input.get(count).getValue());
+//                System.out.print("x="+x+",y="+y);
+                int orderOfProgram = TABLE[x][y];
+                if(orderOfProgram>-1){
+                    System.out.println("操作："+programs.get(orderOfProgram));
+                    ArrayList<Symbol> right = programs.get(orderOfProgram).getRight();
+                    analysisStack.pop();//先删除栈顶字符
+                    if(!right.get(0).getValue().equals("~")){
+                        for (int i = right.size()-1; i >= 0 ; i--) {
+                            analysisStack.push(right.get(i));
+                        }
+                    }
+                }else {
+                    // TODO: 2018/5/14 报错。查表查不到
+                    System.out.println("查不到产生式");
+                    break;
+                }
+            } else if(analysisStack.peek().getValue().equals(input.get(count).getValue())){
+                //如果匹配了字符
+                count++;//去掉一个输入串
+                analysisStack.pop();//删除分析栈的栈顶字符
+                System.out.println("操作：“"+input.get(count).getValue()+"”匹配");
+            } else {
+                // TODO: 2018/5/14 报错
+                System.out.print("无法匹配终结符");
+                break;
+            }
+            step++;
+            System.out.println();
+
+        }
+
+
 
 
 

@@ -3,6 +3,8 @@ package cn.xu419.commom.Par;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 /**
  * @author bsz
  * Created on 2018/5/12
@@ -26,6 +28,13 @@ class ParserTest {
 
 
         System.out.println("------------->开始推导");
-        Parser.process();
+        ArrayList<Terminator> list = new ArrayList();
+        list.add(new Terminator("i"));
+        list.add(new Terminator("+"));
+        list.add(new Terminator("i"));
+        list.add(new Terminator("*"));
+        list.add(new Terminator("i"));
+        list.add(new Terminator("#"));
+        Parser.process(list);
     }
 }
