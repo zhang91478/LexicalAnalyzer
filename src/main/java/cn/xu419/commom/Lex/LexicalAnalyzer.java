@@ -1,4 +1,5 @@
-package cn.xu419.commom;
+package cn.xu419.commom.Lex;
+
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,13 +22,23 @@ public class LexicalAnalyzer {
     private static List<Error> errors = new ArrayList<Error>();//储存错误信息
 
     private static List<Identifier> identifiers =new ArrayList<Identifier>();
-
-
-
-
+    private static String TOKEN[] = {"KeyWord","identifier","number","operator","string","delimiter","character"};
 
     public static void analysis(String filePath) throws IOException {
         List<String> list = readFile(filePath);
+
+
+
+        //KeyWord = 0;
+        //identifier = 1;
+        //number = 2;
+        //operator
+        //
+        //
+        //
+        //
+        //
+
 
 
 
@@ -41,11 +52,6 @@ public class LexicalAnalyzer {
                 c1 = list.get(i).charAt(j);// TODO: 2018/4/9 获得当前字符
                 stringBuilder.append(c1); // TODO: 2018/4/9 将字符存入字符串构造器
 
-
-
-                System.out.println("当前字符-->"+c1+"当前缓存-->‘"
-                        +stringBuilder.toString()+
-                        "’当前状态-->"+state);
 
                 switch (state) {
                     case 0: {
@@ -101,11 +107,12 @@ public class LexicalAnalyzer {
                         } else if (c1 == '[' || c1 == ']' || c1 == '(' || c1 == ')' ||c1=='.'||
                                 c1 == '{' || c1 == '}' || c1 == ';' || c1 == ',' || c1 == ':'||c1=='#') {
                             // TODO: 2018/4/9 如果是界符,处理后将状态返回0
-                            addTokenToList("Delimiter", stringBuilder);
+                            addTokenToList(KindNum.DELIMITER, stringBuilder);
                             state = 0;
                         } else {
                             // TODO: 2018/4/9 不是上述则报错
-                            addErrorToList(i, "error character of " + c1);
+                            addErrorToList(i+1, "error character of " + c1);
+                            stringBuilder.delete(0,stringBuilder.length());
                         }
                         break;
                     }
@@ -132,7 +139,7 @@ public class LexicalAnalyzer {
                             // TODO: 2018/4/9 如果是别的，回退本字符
                             j--;
                             stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-                            addTokenToList("number", stringBuilder);
+                            addTokenToList(KindNum.NUMBER, stringBuilder);
                             state = 0;
                         }
                         break;
@@ -146,7 +153,7 @@ public class LexicalAnalyzer {
                             // TODO: 2018/4/9 如果可以进行运算，回退本字符
                             j--;
                             stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-                            addTokenToList("number", stringBuilder);
+                            addTokenToList(KindNum.NUMBER, stringBuilder);
                             state = 0;
                         }
                         break;
@@ -161,7 +168,7 @@ public class LexicalAnalyzer {
                             // TODO: 2018/4/9 如果是别的，回退本字符
                             j--;
                             stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-                            addTokenToList("number", stringBuilder);
+                            addTokenToList(KindNum.NUMBER, stringBuilder);
                             state = 0;
                         }
                         break;
@@ -177,7 +184,7 @@ public class LexicalAnalyzer {
                             // TODO: 2018/4/9 如果是别的，回退本字符
                             j--;
                             stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-                            addTokenToList("number", stringBuilder);
+                            addTokenToList(KindNum.NUMBER, stringBuilder);
                             state = 0;
                         }
                         break;
@@ -189,7 +196,7 @@ public class LexicalAnalyzer {
                             // TODO: 2018/4/9 如果是别的，回退本字符
                             j--;
                             stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-                            addTokenToList("number", stringBuilder);
+                            addTokenToList(KindNum.NUMBER, stringBuilder);
                             state = 0;
                         }
                         break;
@@ -199,7 +206,7 @@ public class LexicalAnalyzer {
                             // TODO: 2018/4/9 如果是别的，回退本字符
                             j--;
                             stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-                            addTokenToList("number", stringBuilder);
+                            addTokenToList(KindNum.NUMBER, stringBuilder);
                             state = 0;
                         }
                         break;
@@ -253,7 +260,7 @@ public class LexicalAnalyzer {
                     case 13:{
                         if (c1 == '\''){
                             // TODO: 2018/4/10 加入一个字符Token
-                            addTokenToList("character",stringBuilder);
+                            addTokenToList(KindNum.CHARACTER,stringBuilder);
                             state = 0;
                         } else {
                             addErrorToList(i,"error of '");
@@ -262,7 +269,7 @@ public class LexicalAnalyzer {
                     }
                     case 14:{
                         if (c1=='b'||c1=='a'||c1=='n'||c1=='t'||c1=='r'){
-                            addTokenToList("character",stringBuilder);
+                            addTokenToList(KindNum.CHARACTER,stringBuilder);
                         } else {
                             addErrorToList(i,"error of '");
                         }
@@ -272,7 +279,7 @@ public class LexicalAnalyzer {
                     case 15:{
                         if(c1=='"'){
                             // TODO: 2018/4/10 加入一个字符串
-                            addTokenToList("string",stringBuilder);
+                            addTokenToList(KindNum.STRING,stringBuilder);
                             state = 0;
                         }
                         break;
@@ -283,7 +290,7 @@ public class LexicalAnalyzer {
                             j--;
                         }
                         // TODO: 2018/4/10 加入一个操作符
-                        addTokenToList("operator",stringBuilder);
+                        addTokenToList(KindNum.OPERATOR,stringBuilder);
                         state = 0;
                         break;
                     }
@@ -293,7 +300,7 @@ public class LexicalAnalyzer {
                             j--;
                         }
                         // TODO: 2018/4/10 加入一个操作符
-                        addTokenToList("operator",stringBuilder);
+                        addTokenToList(KindNum.OPERATOR,stringBuilder);
                         state = 0;
                         break;
                     }
@@ -303,7 +310,7 @@ public class LexicalAnalyzer {
                             j--;
                         }
                         // TODO: 2018/4/10 加入一个操作符
-                        addTokenToList("operator",stringBuilder);
+                        addTokenToList(KindNum.OPERATOR,stringBuilder);
                         state = 0;
                         break;
                     }
@@ -313,7 +320,7 @@ public class LexicalAnalyzer {
                             j--;
                         }
                         // TODO: 2018/4/10 加入一个操作符
-                        addTokenToList("operator",stringBuilder);
+                        addTokenToList(KindNum.OPERATOR,stringBuilder);
                         state = 0;
                         break;
                     }
@@ -323,7 +330,7 @@ public class LexicalAnalyzer {
                             j--;
                         }
                         // TODO: 2018/4/10 加入一个操作符
-                        addTokenToList("operator",stringBuilder);
+                        addTokenToList(KindNum.OPERATOR,stringBuilder);
                         state = 0;
                         break;
                     }
@@ -333,7 +340,7 @@ public class LexicalAnalyzer {
                             j--;
                         }
                         // TODO: 2018/4/10 加入一个操作符
-                        addTokenToList("operator",stringBuilder);
+                        addTokenToList(KindNum.OPERATOR,stringBuilder);
                         state = 0;
                         break;
                     }
@@ -350,7 +357,7 @@ public class LexicalAnalyzer {
                             stringBuilder.deleteCharAt(stringBuilder.length()-1);
                             j--;
                         }
-                        addTokenToList("operator",stringBuilder);
+                        addTokenToList(KindNum.OPERATOR,stringBuilder);
                         state = 0;
                         break;
                     }
@@ -360,7 +367,7 @@ public class LexicalAnalyzer {
                             stringBuilder.deleteCharAt(stringBuilder.length()-1);
                             j--;
                         }
-                        addTokenToList("operator",stringBuilder);
+                        addTokenToList(KindNum.OPERATOR,stringBuilder);
                         state = 0;
                         break;
                     }
@@ -368,7 +375,7 @@ public class LexicalAnalyzer {
                         // TODO: 2018/4/10 加入一个操作符 *
                         stringBuilder.deleteCharAt(stringBuilder.length()-1);
                         j--;
-                        addTokenToList("operator",stringBuilder);
+                        addTokenToList(KindNum.OPERATOR,stringBuilder);
                         state = 0;
                         break;
                     }
@@ -377,6 +384,7 @@ public class LexicalAnalyzer {
 
                     default:{
                         state = 0;
+                        addErrorToList(i+1,stringBuilder.toString());
                         stringBuilder.delete(0,stringBuilder.length());
                         break;
                     }
@@ -400,7 +408,7 @@ public class LexicalAnalyzer {
      * @param stringBuilder
      * The value of new token
      */
-    private static void addTokenToList(String key, StringBuilder stringBuilder){
+    private static void addTokenToList(Integer key, StringBuilder stringBuilder){
         Token token = new Token(key,stringBuilder.toString());
         stringBuilder.delete(0,stringBuilder.length());
         tokens.add(token);
@@ -415,15 +423,15 @@ public class LexicalAnalyzer {
      */
     private static void identifierOrKeyWord(StringBuilder stringBuilder){
         // TODO: 2018/4/11 区分关键字和标识符
-        Token token = new Token("name",stringBuilder.toString());
+        Token token = new Token(-1,stringBuilder.toString());
         if(KeyWord.isKeyWord(stringBuilder.toString())){
-            token.setKey("KeyWord");
+            token.setKeyNum(KindNum.KEYWORD);
         }else {
             Boolean sign = true;
             for (Identifier identifier1 : identifiers) {
                 if (identifier1.getName().equals(stringBuilder.toString())) {
-                    token.setKey("identifier");
-                    token.setWord(identifier1.getId().toString());
+                    token.setKeyNum(KindNum.IDENTIFIER);
+                    token.setValue(identifier1.getId().toString());
                     sign = false;
                     break;
                 }
@@ -431,8 +439,8 @@ public class LexicalAnalyzer {
             if (sign){
                 Identifier identifier = new Identifier(identifiers.size(),stringBuilder.toString());
                 identifiers.add(identifier);
-                token.setKey("identifier");
-                token.setWord(String.valueOf(identifiers.size()));
+                token.setKeyNum(KindNum.IDENTIFIER);
+                token.setValue(String.valueOf(identifiers.size()));
             }
 
         }
@@ -487,7 +495,7 @@ public class LexicalAnalyzer {
      */
     private static void showTokens(){
         for (Token token : tokens) {
-            System.out.println("<" + token.getKey() + "," + token.word + ">");
+            System.out.println("<" + TOKEN[token.getKeyNum()] + "," + token.getValue() + ">");
         }
     }
 
