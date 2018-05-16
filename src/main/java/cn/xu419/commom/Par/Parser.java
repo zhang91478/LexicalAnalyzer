@@ -1,7 +1,6 @@
 package cn.xu419.commom.Par;
 
 
-import cn.xu419.commom.Lex.Token;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -22,10 +21,7 @@ public class Parser {
     private static ArrayList<Terminator> VT = new ArrayList<Terminator>();
     private static int[][] TABLE;
 
-
-
-
-    public static boolean process(ArrayList<Terminator> input) {
+    public static void process(ArrayList<Terminator> input) {
         ArrayList<Program> list = new ArrayList<Program>();
 
         // TODO: 2018/5/14 将programs复制到list
@@ -58,12 +54,12 @@ public class Parser {
             list.add(p);
         }
 
-        // TODO: 2018/5/14
-        System.out.println("打印一下list看复制是否成功");
-        for (Program program:list) {
-           System.out.println(program.toString());
-
-        }
+//        // TODO: 2018/5/14
+//        System.out.println("打印一下list看复制是否成功");
+//        for (Program program:list) {
+//           System.out.println(program.toString());
+//
+//        }
 
 
         // TODO: 2018/5/14 第一次扫描文法找出确定能够推空的和确定不能推空的
@@ -88,11 +84,11 @@ public class Parser {
             }
         }
 
-        // TODO: 2018/5/14 确定能否推空完成，打印一下表格
-        System.out.println("可推空的非终结符表：");
-        for (NonTerminator nt111:VN) {
-            System.out.println(nt111.getValue()+":"+nt111.getTag());
-        }
+//        // TODO: 2018/5/14 确定能否推空完成，打印一下表格
+//        System.out.println("可推空的非终结符表：");
+//        for (NonTerminator nt111:VN) {
+//            System.out.println(nt111.getValue()+":"+nt111.getTag());
+//        }
 
 
         for (NonTerminator nt : VN) {
@@ -107,11 +103,11 @@ public class Parser {
             }
         }
 
-        // TODO: 2018/5/14 确定能否推空完成，打印一下表格
-        System.out.println("可推空的非终结符表：");
-        for (NonTerminator nt111:VN) {
-            System.out.println(nt111.getValue()+":"+nt111.getTag());
-        }
+//        // TODO: 2018/5/14 确定能否推空完成，打印一下表格
+//        System.out.println("可推空的非终结符表：");
+//        for (NonTerminator nt111:VN) {
+//            System.out.println(nt111.getValue()+":"+nt111.getTag());
+//        }
 
         // TODO: 2018/5/14 重复扫描文法确定剩余文法是否能推空
         boolean isTheThirdStepOk;
@@ -151,11 +147,11 @@ public class Parser {
         } while (isTheThirdStepOk);
 
 
-        // TODO: 2018/5/14 确定能否推空完成，打印一下表格
-        System.out.println("可推空的非终结符表：");
-        for (NonTerminator nt111:VN) {
-            System.out.println(nt111.getValue()+":"+nt111.getTag());
-        }
+//        // TODO: 2018/5/14 确定能否推空完成，打印一下表格
+//        System.out.println("可推空的非终结符表：");
+//        for (NonTerminator nt111:VN) {
+//            System.out.println(nt111.getValue()+":"+nt111.getTag());
+//        }
 
         // TODO: 2018/5/14 打印结束，开始求First
 
@@ -194,10 +190,6 @@ public class Parser {
         for (NonTerminator nt:VN) {
             for (Program program:programs) {
 
-                System.out.println("打印一下FOLLOW");
-                for (NonTerminator nt111:VN) {
-                    System.out.println(nt111.getValue()+":"+nt111.getFollowSet());
-                }
                 ArrayList<Symbol> right = program.getRight();
                 for (int i = 0;i<right.size()-1;i++){
                     //如果当前是非终结符
@@ -312,8 +304,8 @@ public class Parser {
         int step= 1;//记录步骤
         while (!analysisStack.empty()){
             System.out.println("第"+step+"步");
-            System.out.println("分析栈"+analysisStack+"\t");
-            System.out.print("剩余输入串");
+            System.out.println("分析栈:"+analysisStack);
+            System.out.print("剩余输入串:");
             for (int i = count; i < input.size(); i++) {
                 System.out.print(input.get(i).getValue());
             }
@@ -326,6 +318,10 @@ public class Parser {
 
                 int x = isInVN(analysisStack.peek().getValue());
                 int y = isInVT(input.get(count).getValue());
+                if(x<0||y<0){
+                    System.out.println("ERROR:无此终结符");
+                    break;
+                }
 //                System.out.print("x="+x+",y="+y);
                 int orderOfProgram = TABLE[x][y];
                 if(orderOfProgram>-1){
@@ -344,9 +340,9 @@ public class Parser {
                 }
             } else if(analysisStack.peek().getValue().equals(input.get(count).getValue())){
                 //如果匹配了字符
+                System.out.println("操作：“"+input.get(count).getValue()+"”匹配");
                 count++;//去掉一个输入串
                 analysisStack.pop();//删除分析栈的栈顶字符
-                System.out.println("操作：“"+input.get(count).getValue()+"”匹配");
             } else {
                 // TODO: 2018/5/14 报错
                 System.out.print("无法匹配终结符");
@@ -357,15 +353,18 @@ public class Parser {
 
         }
 
+        if(analysisStack.empty()){
+            System.out.println("第"+step+"步");
+            System.out.println("分析栈："+analysisStack);
+            System.out.print("剩余输入串:");
+            for (int i = count; i < input.size(); i++) {
+                System.out.print(input.get(i).getValue());
+            }
+            System.out.println();
+            System.out.println("操作：接受");
+        }
 
 
-
-
-
-
-
-
-        return false;
     }
 
 
@@ -421,7 +420,6 @@ public class Parser {
                     case 1:{
                         if(!str.isEmpty()){
                             for (String s : str.split(" ")) {
-                                System.out.println("分解后的右面:"+s);
                                 if(s.matches("('|[A-Z])+")){
                                     // TODO: 2018/5/13 加入一个右边的非终结符
                                     int i = isInVN(s);

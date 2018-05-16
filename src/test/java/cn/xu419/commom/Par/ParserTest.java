@@ -13,7 +13,7 @@ class ParserTest {
 
     @Test
     void Pro() {
-        Parser.readProgramFile("E:/progra.txt");
+        Parser.readProgramFile("E:/program.txt");
         System.out.println("------------->文法");
         for (Program p : Parser.getPrograms()) {
             System.out.println(p.toString());
@@ -28,13 +28,12 @@ class ParserTest {
 
 
         System.out.println("------------->开始推导");
-        ArrayList<Terminator> list = new ArrayList();
-        list.add(new Terminator("i"));
-        list.add(new Terminator("+"));
-        list.add(new Terminator("i"));
-        list.add(new Terminator("*"));
-        list.add(new Terminator("i"));
-        list.add(new Terminator("#"));
+        ArrayList<Terminator> list = new ArrayList<Terminator>();
+        String str = "a*b6#";
+        for (int i = 0; i<str.length();i++){
+            list.add(new Terminator(String.valueOf(str.charAt(i))));
+        }
+
         Parser.process(list);
     }
 }
